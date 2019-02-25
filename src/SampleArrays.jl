@@ -1,5 +1,11 @@
 module SampleArrays
 
-greet() = print("Hello World!")
+import LinearAlgebra
+using FFTW
+
+include("axis.jl")
+include("signal.jl")
+include("signalarray.jl")
+include("fourier.jl")
 
 end # module
