@@ -1,0 +1,10 @@
+name = "SampleArrays"
+uuid = "19d02e5a-8da8-58af-9d3d-5dfea690b823"
+authors = ["Kristof Cools <krcools@gmail.com>"]
+version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
