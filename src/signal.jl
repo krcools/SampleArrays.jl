@@ -86,7 +86,7 @@ function add!(s1::SampledSignal, s2::SampledSignal)
     h = stepsize(s1)
 
     r = abs(offset(s1)-offset(s2))/h
-    i = floor(Int,r)
+    i = round(Int,r)
     @assert abs(r-i) < tol
 
     @assert first(axis(s2)) >= first(axis(s1)) - tol

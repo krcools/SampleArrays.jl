@@ -5,7 +5,7 @@
     F(\\omega) = 1/\\sqrt{2 \\pi} \\int f(t) e^{-i \\omega t} dt
 ```
 """
-function fouriertransform(a::Array, dt, t0, dim=1)
+function fouriertransform(a::AbstractArray, dt, t0, dim=1)
     n = size(a,dim)
     dω = 2π / (n*dt)
     b = fftshift(fft(a, dim), dim) * dt / sqrt(2π)
