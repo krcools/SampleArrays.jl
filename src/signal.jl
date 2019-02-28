@@ -24,7 +24,7 @@ Base.setindex!(signal::SampledSignal, v, i) = (signal.samples[i] = v)
 Base.:/(s::SampledSignal, a::Number) = SampledSignal(s.samples./a, s.stepsize, s.offset)
 Base.:*(a::Number, s::SampledSignal) = SampledSignal(a.*s.samples, s.stepsize, s.offset)
 
-LinearAlgebra.norm(s::SampledSignal) = sqrt(stepsize(axis(s))) * norm(samples(s))
+LinearAlgebra.norm(s::SampledSignal) = sqrt(stepsize(axis(s))) * LinearAlgebra.norm(samples(s))
 
 stepsize(signal::SampledSignal) = signal.stepsize
 offset(signal::SampledSignal) = signal.offset
@@ -56,7 +56,7 @@ function Base.:+(s1::SampledSignal, s2::SampledSignal)
     #     @show offset(s2)+(length(s2)-1)*Δt
     #     @show Δt
     # end
-    
+
     t0 = min(offset(s1), offset(s2))
     t1 = max(offset(s1)+(length(s1)-1)*Δt, offset(s2)+(length(s2)-1)*Δt)
 
@@ -76,6 +76,30 @@ function Base.:+(s1::SampledSignal, s2::SampledSignal)
     end
 
     return s
+end
+
+function add!(s1::SampledSignal, s2::SampledSignal)
+
+    tol = 1e3*eps(eltype(s1))
+
+    @assert stepsize(s1) ≈ stepsize(s2)
+    h = stepsize(s1)
+
+    r = abs(offset(s1)-offset(s2))/h
+    i = floor(Int,r)
+    @assert abs(r-i) < tol
+
+    @assert first(axis(s2)) >= first(axis(s1)) - tol
+    @assert last(axis(s1)) + tol >= last(axis(s2))
+
+    t0 = first(axis(s1))
+    for i in eachindex(s2)
+        t = offset(s2) + (i-1)*h
+        j = round(Int, (t-t0)/h) + 1
+        s1.samples[j] += s2.samples[i]
+    end
+
+    return s1
 end
 
 Base.:-(s1::SampledSignal, s2::SampledSignal) = (s1 + (-1.0)*s2)

@@ -31,7 +31,7 @@ function subsignal(axis, f, ϕ)
     SubSignal(samples, offset, stepsize, numsteps, ϕ)
 end
 
-function subsignal(F::SampledSignals.SampledSignal, ϕ)
+function subsignal(F::SampleArrays.SampledSignal, ϕ)
 
     ax = axis(F)
     offset = first(ax)

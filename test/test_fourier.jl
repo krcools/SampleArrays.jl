@@ -1,6 +1,6 @@
 
 
-using SampledSignals
+using SampleArrays
 using Test
 
 include("utils/APS.jl")
@@ -16,16 +16,16 @@ p = 10
 ϕ = APS(stepsize=Δt, tailsteps=p, oversampling=χ)
 
 M = 6*p
-f = subsignal(SampledSignals.axis(0,Δt,M), t->sin(ωm*t), ϕ)
-B = SampledSignals.sampledsignal(f, -p*Δt:Δt:(M+p)*Δt)
+f = subsignal(SampleArrays.axis(0,Δt,M), t->sin(ωm*t), ϕ)
+B = SampleArrays.sampledsignal(f, -p*Δt:Δt:(M+p)*Δt)
 
-C = SampledSignals.fouriertransform(B)
-@show SampledSignals.offset(C)
-@show SampledSignals.stepsize(C)
+C = SampleArrays.fouriertransform(B)
+@show SampleArrays.offset(C)
+@show SampleArrays.stepsize(C)
 
-D = SampledSignals.inversefouriertransform(C, SampledSignals.offset(B))
+D = SampleArrays.inversefouriertransform(C, SampleArrays.offset(B))
 @test length(B) == length(D)
-@test SampledSignals.samples(B) ≈ SampledSignals.samples(D)
+@test SampleArrays.samples(B) ≈ SampleArrays.samples(D)
 
-t = SampledSignals.axis(D)
+t = SampleArrays.axis(D)
 @test eltype(D) == Float64

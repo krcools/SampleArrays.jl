@@ -17,7 +17,7 @@ Base.length(signal::SignalArray) = length(signal.array)
 Base.eltype(signal::SignalArray{U,N1,T}) where {U,N1,T} = SampledSignal{U,T}
 
 function Base.getindex(signal::SignalArray, i)
-    sampledsignal(axis(signal), signal.array[i,:])
+    sampledsignal(axis(signal), view(signal.array,i,1:size(signal.array,2)))
 end
 
 function Base.setindex!(signal::SignalArray, v, i::Int)
