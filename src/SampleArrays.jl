@@ -5,7 +5,7 @@ using FFTW
 
 export sampledsignal, axis, stepsize, offset, restrict, samples
 export fouriertransform, inversefouriertransform
-export SignalArray
+export SampleBundle
 
 include("axis.jl")
 include("signal.jl")
