@@ -80,7 +80,7 @@ end
 
 function add!(s1::SampledSignal, s2::SampledSignal)
 
-    tol = 1e3*eps(eltype(s1))
+    tol = 1e4*eps(eltype(s1))
 
     @assert stepsize(s1) ≈ stepsize(s2)
     h = stepsize(s1)
@@ -140,4 +140,18 @@ function restrict(s::SampledSignal, ax::AbstractRange)
     i0 = max(1, round(Int, (first(ax)-first(ax1))/Δx) + 1)
     i1 = min(length(samples(s)), round(Int, (last(ax)-first(ax1))/Δx) + 1)
     sampledsignal(ax, samples(s)[i0:i1])
+end
+
+
+const SomeFunction = Union{TimeDomainFunction, FrequencyDomainFunction, Function}
+function mul!(f::SomeFunction, s::SampledSignal)
+    for (i,x) in enumerate(axis(s))
+        samples(s)[i] *= f(x)
+    end
+    return s
+end
+
+function Base.:*(f::SomeFunction, s::SampledSignal)
+    s2 = deepcopy(s)
+    mul!(f,s2)
 end
