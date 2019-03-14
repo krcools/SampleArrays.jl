@@ -38,3 +38,18 @@ offset(signal::SampleBundle) = signal.offset
 axis(signal::SampleBundle) = axis(offset(signal), stepsize(signal), size(signal.array,2))
 
 signal(a::SampleBundle, i::Int) = SampledSignal(a.array[i,:], axis(a))
+
+
+function restrict(s::SampleBundle, ax::AbstractRange)
+    ax1 = axis(s)
+    x0 = first(ax1)
+    @assert stepsize(ax) ≈ stepsize(ax1)
+    Δx = stepsize(ax)
+    i0 = max(1, round(Int, (first(ax)-first(ax1))/Δx) + 1)
+    i1 = min(size(s.array,2), round(Int, (last(ax)-first(ax1))/Δx) + 1)
+    # @show i0 i1
+    @assert i0 <= i1
+    ax2 = range(x0+(i0-1)*Δx, step=Δx, length=i1-i0+1)
+    @assert length(ax2) == (i1-i0+1)
+    SampleBundle(s.array[:,i0:i1], Δx, x0)
+end

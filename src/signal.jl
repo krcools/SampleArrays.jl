@@ -29,6 +29,7 @@ LinearAlgebra.norm(s::SampledSignal) = sqrt(stepsize(axis(s))) * LinearAlgebra.n
 stepsize(signal::SampledSignal) = signal.stepsize
 offset(signal::SampledSignal) = signal.offset
 axis(signal::SampledSignal) = axis(offset(signal), stepsize(signal), length(signal))
+support(signal::SampledSignal) = first(axis(signal)) : last(axis(signal))
 samples(signal::SampledSignal) = signal.samples
 
 RecipesBase.@recipe f(s::SampledSignal) = (axis(s), samples(s))
@@ -130,16 +131,35 @@ function differentiate(s::SampledSignal)
     sampledsignal(ax2, samples2)
 end
 
+function differentiate2(s::SampledSignal)
+    h = step(axis(s))
+    a = samples(s)
+    b = similar(a)
+    b[1] = (a[2])/(2h)
+    b[end] = (-a[end-1])/(2h)
+    for i in eachindex(a)[2:end-1]
+        b[i] = (a[i+1]-a[i-1])/(2h)
+    end
+    return sampledsignal(axis(s), b)
+end
+
 
 function restrict(s::SampledSignal, ax::AbstractRange)
     ax1 = axis(s)
+    x0 = first(ax1)
     #@assert first(ax1) <= first(ax)
     #@assert last(ax) <= last(ax1)
     @assert stepsize(ax) ≈ stepsize(ax1)
     Δx = stepsize(ax)
     i0 = max(1, round(Int, (first(ax)-first(ax1))/Δx) + 1)
     i1 = min(length(samples(s)), round(Int, (last(ax)-first(ax1))/Δx) + 1)
-    sampledsignal(ax, samples(s)[i0:i1])
+    # @show round(Int, (first(ax)-first(ax1))/Δx) + 1
+    # @show round(Int, (last(ax)-first(ax1))/Δx) + 1
+    # @show i0 i1
+    @assert i0 <= i1
+    ax2 = range(x0+(i0-1)*Δx, step=Δx, length=i1-i0+1)
+    @assert length(ax2) == (i1-i0+1)
+    sampledsignal(ax2, samples(s)[i0:i1])
 end
 
 
