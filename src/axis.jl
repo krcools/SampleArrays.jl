@@ -23,8 +23,11 @@ function join_snapped(a::AbstractRange, b, step)
     snap(set_addition(a,b), step)
 end
 
-function snap(r::AbstractRange, step)
-    i0 = floor(Int,first(r)/step)
-    i1 = ceil(Int, last(r)/step)
-    return axis(i0*step, step, i1-i0+1)
+function snap(x0, x1, step)
+    tol = eps(eltype(x0)) * 1e3
+    i0 = floor(Int, x0/step + tol)
+    # i1 = ceil(Int, last(r)/step)
+    i1 = ceil(Int, x1/step - tol)
+    return range(i0*step, stop=i1*step, length=i1-i0+1)
+    # return axis(i0*step, step, i1-i0+1)
 end
