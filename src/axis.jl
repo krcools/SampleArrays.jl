@@ -6,6 +6,7 @@ export snap
 axis(x0,dx,n) = range(x0, stop = x0 +(n-1)*dx, length = n)
 offset(ax::AbstractVector) = first(ax)
 stepsize(ax::AbstractVector) = (ax[2]-ax[1])
+stepsize(ax::AbstractRange) = step(ax)
 
 
 hull(a::AbstractRange, b::AbstractRange) = min(first(a),first(b)) : max(last(a),last(b))

@@ -152,7 +152,9 @@ function restrict(s::SampledSignal, ax::AbstractRange)
     @assert stepsize(ax) ≈ stepsize(ax1)
     Δx = stepsize(ax)
     i0 = max(1, round(Int, (first(ax)-first(ax1))/Δx) + 1)
+    i0 = min(i0, length(ax1))
     i1 = min(length(samples(s)), round(Int, (last(ax)-first(ax1))/Δx) + 1)
+    i1 = max(i1, 1)
     # @show round(Int, (first(ax)-first(ax1))/Δx) + 1
     # @show round(Int, (last(ax)-first(ax1))/Δx) + 1
     # @show i0 i1
