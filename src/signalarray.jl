@@ -1,4 +1,4 @@
-struct SampleBundle{U,N1,T} <: AbstractArray{U,N1}
+struct SampleBundle{U,N1,T} <: AbstractArray{U,1}
     array::Array{U,N1}
     stepsize::T
     offset::T
@@ -10,14 +10,14 @@ function SampleBundle{U}(axis; dims=dims) where {U}
     SampleBundle(array, stepsize(axis), offset(axis))
 end
 
-Base.IndexStyle(::Type{<:SampleBundle}) = Base.IndexCartesian()
+# Base.IndexStyle(::Type{<:SampleBundle}) = Base.IndexCartesian()
 
-Base.size(signal::SampleBundle) = size(signal.array)
-Base.length(signal::SampleBundle) = length(signal.array)
+Base.size(signal::SampleBundle) = size(signal.array)[[1]]
+# Base.length(signal::SampleBundle) = length(signal.array)
 Base.eltype(signal::SampleBundle{U,N1,T}) where {U,N1,T} = SampledSignal{U,T}
 
 function Base.getindex(signal::SampleBundle, i)
-    sampledsignal(axis(signal), view(signal.array,i,1:size(signal.array,2)))
+    sampledsignal(axis(signal), view(signal.array, i, 1:size(signal.array,2)))
 end
 
 function Base.setindex!(signal::SampleBundle, v, i::Int)
